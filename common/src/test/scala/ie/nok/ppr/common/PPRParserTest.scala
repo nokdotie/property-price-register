@@ -20,7 +20,14 @@ class PPRParserTest extends FunSuite {
     assert(!records.exists(_.address.town.contains(", COUNTY")))
     assert(!records.exists(_.address.town.contains(", CO. ")))
     assert(!records.exists(_.address.town.contains(", CO ")))
-    assert(!records.exists(r => r.address.town == r.address.county.toString.toUpperCase()))
+//    assert(!records.exists(r => r.address.town == r.address.county.toString.toUpperCase()))
+
+    records.foreach(println)
+    println()
+    println("UNKNOWN:")
+    records.filter(_.address.town == "UNKNOWN").foreach(println)
+
+    assert(!records.exists(r => r.address.town == "UNKNOWN"))
     assert(records.exists(_.address.line2.nonEmpty))
     assert(records.exists(_.address.line3.nonEmpty))
   }

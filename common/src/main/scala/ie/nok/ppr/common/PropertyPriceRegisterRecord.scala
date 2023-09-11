@@ -6,7 +6,7 @@ import java.time.LocalDate
 
 object County extends Enumeration {
   type County = Value
-  val Carlow, Cavan, Clare, Cork, Donegal, Dublin, Galway, Kerry, Kildare, Kilkenny, Laois, Leitrim, Limerick, Longford, Louth, Mayo, Meath, Monaghan, Offaly, Roscommon, Sligo, Tipperary, Waterford, Westmeath, Wexford, Wicklow = Value
+  val CARLOW, CAVAN, CLARE, CORK, DONEGAL, DUBLIN, GALWAY, KERRY, KILDARE, KILKENNY, LAOIS, LEITRIM, LIMERICK, LONGFORD, LOUTH, MAYO, MEATH, MONAGHAN, OFFALY, ROSCOMMON, SLIGO, TIPPERARY, WATERFORD, WESTMEATH, WEXFORD, WICKLOW = Value
 }
 
 case class Address(
@@ -33,6 +33,7 @@ object PropertyType {
 case class PropertyPriceRegisterRecord(
     dateOfSale: LocalDate,
     address: Address,
+    priceInEuro: Double,
     fullMarketPrice: Boolean,
     vatExclusive: Boolean,
     propertyType: PropertyType,

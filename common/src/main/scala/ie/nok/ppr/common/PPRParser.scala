@@ -2,6 +2,7 @@ package ie.nok.ppr.common
 
 import com.github.tototoshi.csv.CSVReader
 import com.github.tototoshi.csv.*
+import ie.nok.ppr.common.County.*
 
 import java.io.File
 import java.text.DateFormat
@@ -11,9 +12,9 @@ import java.time.format.DateTimeFormatter
 object PPRParser {
 
   def recordsFromCsv(
-                      file: File,
-                      encoding: String = "Windows-1252"
-                    ): List[PropertyPriceRegisterRecord] = {
+      file: File,
+      encoding: String = "Windows-1252"
+  ): List[PropertyPriceRegisterRecord] = {
     val reader = CSVReader.open(file, encoding)
     reader
       .allWithHeaders()
@@ -53,8 +54,10 @@ object PPRParser {
       input: PropertyPriceRegisterRaw
   ): PropertyPriceRegisterRecord = {
     PropertyPriceRegisterRecord(
-      dateOfSale = LocalDate.parse(input.dateOfSale, DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+      dateOfSale = LocalDate
+        .parse(input.dateOfSale, DateTimeFormatter.ofPattern("dd/MM/yyyy")),
       address = toAddress(input),
+      priceInEuro = input.priceInEuro,
       fullMarketPrice = !input.notFullMarketPrice,
       vatExclusive = input.vatExclusive,
       propertyType = toPropertyType(input.description),
@@ -62,33 +65,34 @@ object PPRParser {
     )
   }
 
+  private val countyThatIsNotATown: List[County] =
+    List(CLARE, LAOIS, LEITRIM, MAYO, MEATH, OFFALY, WESTMEATH)
+
   private def toAddress(input: PropertyPriceRegisterRaw): Address = {
-    val addressWithoutCounty1 = input.address
+    val addressWithoutCounty = input.address.toUpperCase
       .split(", COUNTY ")(0)
       .split(", CO. ")(0)
       .split(", CO ")(0)
-    val addressWithoutCounty2 = County.values
-      .foldLeft(addressWithoutCounty1)((acc, county) => acc.replace(s", ${county.toString.toUpperCase}", ""))
 
-    val rawSplit = addressWithoutCounty2.split(",").map(_.trim)
+    val rawSplit = addressWithoutCounty.split(",").map(_.trim)
     val line2 = rawSplit.lift(1)
     val line3 = rawSplit.lift(2)
-    val line4 = line3.map(l => l.splitAt(l.indexOf("DUBLIN"))._2)
+    val line4 = line3.map(l => if (l.startsWith("DUBLIN")) "DUBLIN" else l)
     Address(
       raw = input.address,
       line1 = rawSplit(0),
       line2 = line2,
       line3 = line3,
       town = line4.orElse(line3).orElse(line2).getOrElse("UNKNOWN"),
-      county = County.withName(input.county),
+      county = County.withName(input.county.toUpperCase),
       eirCode = input.eirCode
     )
   }
 
   private def toPropertyType(str: String): PropertyType = str match {
-    case PropertyType.New.description => PropertyType.New
+    case PropertyType.New.description        => PropertyType.New
     case PropertyType.SecondHand.description => PropertyType.SecondHand
-    case _ => PropertyType.Unknown
+    case _                                   => PropertyType.Unknown
   }
 
 }

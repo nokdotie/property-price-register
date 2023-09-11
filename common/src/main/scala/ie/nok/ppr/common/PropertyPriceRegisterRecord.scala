@@ -1,12 +1,11 @@
 package ie.nok.ppr.common
 
-import ie.nok.ppr.common.County.County
-
 import java.time.LocalDate
 
-object County extends Enumeration {
-  type County = Value
-  val CARLOW, CAVAN, CLARE, CORK, DONEGAL, DUBLIN, GALWAY, KERRY, KILDARE, KILKENNY, LAOIS, LEITRIM, LIMERICK, LONGFORD, LOUTH, MAYO, MEATH, MONAGHAN, OFFALY, ROSCOMMON, SLIGO, TIPPERARY, WATERFORD, WESTMEATH, WEXFORD, WICKLOW = Value
+enum County {
+  case CARLOW, CAVAN, CLARE, CORK, DONEGAL, DUBLIN, GALWAY, KERRY, KILDARE,
+    KILKENNY, LAOIS, LEITRIM, LIMERICK, LONGFORD, LOUTH, MAYO, MEATH, MONAGHAN,
+    OFFALY, ROSCOMMON, SLIGO, TIPPERARY, WATERFORD, WESTMEATH, WEXFORD, WICKLOW
 }
 
 case class Address(
@@ -19,19 +18,12 @@ case class Address(
     eirCode: Option[String]
 )
 
-sealed abstract class PropertyType(val description: String)
-object PropertyType {
-  case object New
-      extends PropertyType(description = "New Dwelling house /Apartment")
-  case object SecondHand
-      extends PropertyType(description =
-        "Second-Hand Dwelling house /Apartment"
-      )
-  case object Unknown extends PropertyType(description = "Unknown")
+enum PropertyType {
+  case New, SecondHand, Unknown
 }
 
 case class PropertyPriceRegisterRecord(
-    dateOfSale: LocalDate,
+    soldAt: LocalDate,
     address: Address,
     priceInEuro: Double,
     fullMarketPrice: Boolean,

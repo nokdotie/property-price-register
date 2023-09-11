@@ -54,7 +54,7 @@ object PPRParser {
       input: PropertyPriceRegisterRaw
   ): PropertyPriceRegisterRecord = {
     PropertyPriceRegisterRecord(
-      dateOfSale = LocalDate
+      soldAt = LocalDate
         .parse(input.dateOfSale, DateTimeFormatter.ofPattern("dd/MM/yyyy")),
       address = toAddress(input),
       priceInEuro = input.priceInEuro,
@@ -84,15 +84,15 @@ object PPRParser {
       line2 = line2,
       line3 = line3,
       town = line4.orElse(line3).orElse(line2).getOrElse("UNKNOWN"),
-      county = County.withName(input.county.toUpperCase),
+      county = County.valueOf(input.county.toUpperCase),
       eirCode = input.eirCode
     )
   }
 
   private def toPropertyType(str: String): PropertyType = str match {
-    case PropertyType.New.description        => PropertyType.New
-    case PropertyType.SecondHand.description => PropertyType.SecondHand
-    case _                                   => PropertyType.Unknown
+    case "New Dwelling house /Apartment"         => PropertyType.New
+    case "Second-Hand Dwelling house /Apartment" => PropertyType.SecondHand
+    case _                                       => PropertyType.Unknown
   }
 
 }

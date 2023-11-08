@@ -16,7 +16,7 @@ lazy val root = project
 
 lazy val `property-price-register` = project
   .settings(
-    githubOwner := "nok-ie",
+    githubOwner := "nokdotie",
     githubRepository := "property-price-register",
-    resolvers += Resolver.githubPackages("nok-ie")
+    resolvers += Resolver.githubPackages("nokdotie")
   )
